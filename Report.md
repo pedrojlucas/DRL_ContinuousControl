@@ -89,4 +89,4 @@ Finally, a very simple change to make would be to raise the target score - say, 
 
 # References
 
-1.- [DDPG Paper] (https://arxiv.org/abs/1509.02971)
+1.- [DDPG Paper](https://arxiv.org/abs/1509.02971)
