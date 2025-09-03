@@ -1,5 +1,5 @@
 # Description of the environment
-This environment created by Unity ML is one of the nice playgrounds to test Deep Reinforcement learning algorithms. We are going to solve it using an implementation of DQN.
+This environment created by Unity ML is one of the nice playgrounds to test Deep Reinforcement learning algorithms. We are going to solve it using an implementation of DDPG algorithm.
 
 ![reacher](https://github.com/user-attachments/assets/dfa415e5-a67d-4056-b630-83e14f0e5d9b)
 
