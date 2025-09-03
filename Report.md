@@ -1,26 +1,41 @@
 # Environment details
 
-The state space has 37 dimensions and consists of:
+In this project, we teach an AI reinforcement learning agent in the Unity Reacher environment to direct a double-jointed robot arm to a target location - marked below by a green bubble - and to maintain contact with the target location for as long as possible. A reward of +0.1 is given for each time step that the agent's hand is in the target location, and the environment is considered solved when the robot arm agent attains an average score of 30+ points over 100 consecutive episodes.
 
-* The agent's velocity.
-* Ray based objects position in the agents forward field of view.
+The state space in this environment has 33 variables corresponding to the position, rotation, velocity, and angular velocities of the robot arm. The action space is a vector of 4 variables corresponding to the torque applied to the two joints of the robot arm, and each number in the action vector is clipped between -1 and 1. This environment is marked by a continuous action space, with a highly variable range of potential action values and a wide range of motion for the arm to use.
 
-The agent receives a reward of +1 for a yellow banana, and -1 for blue banana. The goal is therefore to maximize the collection of yellow bananas while minimizing / avoiding blue ones.
-
-The action space for the agent consists of the following four possible actions:
-
-0 - walk forward  
-1 - walk backward  
-2 - turn left  
-3 - turn right  
-The agent must collect a reward of +13 or more in over 100 consecutive episodes to solve the problem.  
+There are two versions of this project environment. The first version contains a single agent; the second version contains 20 identical agents operating in their own copies of the environment, whose learning experience is gathered and then shared across all the agents. For my own implementation, I've chosen to work with the 1 single agent environment. This type of multi-agent learning is useful for AI algorithms like proximal policy optimization (PPO), asynchronous methods, and distributed distributional deterministic policy gradients (DDPG).
 
 # Learning algorithm
-Q-Learning is an approach which generates a Q-table that is used by an agent to determine best action for a given state. This technique becomes difficult and inefficient in environments that have a large state space. Deep Q-Networks on the other hand makes use of a neural network to approximate Q-values for each action based on the input state.
 
-However, there are drawbacks in Deep Q-Learning. A common issue is that the reinforcement learning tends to be unstable or divergent when a non-linear function approximator such as neural networks are used to represent Q. This instability comes from the correlations present in the sequence of observations, the fact that small updates to Q may significantly change the policy and the data distribution, and the correlations between Q and the target values.
+The reinforcement learning algorithm being used in this project is deep deterministic policy gradients, or DDPG. DDPG combines the strengths of policy-based (stochastic) and value-based (deterministic) AI learning methods by using two agents, called the Actor and the Critic. The actor directly estimates the optimal policy, or action, for a given state, and applies gradient ascent to maximize rewards. The critic takes the actor's output and uses it to estimate the value (or cumulative future reward) of state-action pairs. The weights of the actor are then updated with the critic’s output, and the critic is updated with the gradients from the temporal-difference error signal at each step. This hybrid algorithm can be a very robust form of artificial intelligence, because it needs fewer training samples than a purely policy-based agent, and demonstrates more stable learning than a purely value-based one.
 
-To overcome this, experience replay is a technique that was used in this solution that uses the biologically inspired approach of replaying a random sample of prior actions to remove correlations in the observation sequence and smooth changes in the data distribution.
+# Important considerations
+
+In order to achieve an stable and reliable training of the agent some important considerations are taking into account:
+
+* Modifying the Agent.step() method to accommodate multiple agents, and to employ a learning interval. This ensures that the agent performs the learning step only once every 20 time steps during training, and each time 10 passes are made through experience sampling and the Agent.learn() method:
+
+  ``` def step(self, state, action, reward, next_state, done, count):
+        """Save experience in replay memory, and use random sample from buffer to learn."""
+        # Save experience / reward
+        self.memory.add(state, action, reward, next_state, done)
+
+        # Learn every x steps (in this case 10), if enough samples are available in memory, and learn 5 times in that moment.
+        if len(self.memory) > BATCH_SIZE:
+            if count % 10 == 0: 
+                for i in range(1,5): 
+                    experiences = self.memory.sample()
+                    self.learn(experiences, GAMMA) ```
+
+* Adding gradient clipping to the critic's loss in the Agent.learn() method. This bounds the upper limits of the gradients close to 1, and prevents the 'exploding gradient problem', in which a network risks making the updated weights too large to properly learn from:
+
+  ``` if GRAD_CLIPPING > 0:
+            torch.nn.utils.clip_grad_norm_(self.critic_local.parameters(), GRAD_CLIPPING) # added to improve training ```
+
+* In the OUNoise.sample() method, changing random.random() to np.random.randn(). This means that the random noise being added to the experience replay buffer samples via the Ornstein-Uhlenbeck process follows a Gaussian distribution, and turns out to perform much better than a completely random distribution in this case!
+
+  ``` dx = self.theta * (self.mu - x) + self.sigma * np.array([np.random.randn() for i in range(len(x))]) ```
 
 # Model architecture and hyperparameters
 
