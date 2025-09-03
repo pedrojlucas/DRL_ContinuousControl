@@ -39,25 +39,40 @@ In order to achieve an stable and reliable training of the agent some important 
 
 # Model architecture and hyperparameters
 
-Fully connected layer 1: Input 37 (state space), Output 64, RELU activation.  
-Fully connected layer 2: Input 64, Output 64, RELU activation.  
-Fully connected layer 3: Input 64, Output 4 (action space).  
+## Architecture for the Actor
+
+Fully connected layer 1: Input 33 (state space), Output 256, RELU activation.  
+Batch normalization layer 1: Input 256 and output 256. Smooth training.
+Fully connected layer 2: Input 256, Output 256, RELU activation.  
+Fully connected layer 3: Input 256, Output 4 (action space), tanh activation for clipping output between -1 and 1. 
+
+## Architecture for the Critic
+
+Fully connected layer 1: Input 33 (state space), Output 256, RELU activation.  
+Batch normalization layer 1: Input 256 and output 256. Smooth training.
+Fully connected layer 2: Input 256, Output 256, RELU activation.  
+Fully connected layer 3: Input 256, Output 4 (action space).   
 
 The hyperparameters for tweaking and optimizing the learning algorithm were:
 
-max_t (3000): maximum number of timesteps per episode.  
-eps_start (1.0): starting value of epsilon, for epsilon-greedy action selection.  
-eps_end (0.01): minimum value of epsilon.  
-eps_decay (0.995): multiplicative factor (per episode) for decreasing epsilon.  
+max_t (3000): maximum number of timesteps per episode.    
+BUFFER_SIZE = int(1e6)  replay buffer size  
+BATCH_SIZE = 256        minibatch size  
+GAMMA = 0.99            discount factor  
+TAU = 1e-3              for soft update of target parameters  
+LR_ACTOR = 1e-4         learning rate of the actor   
+LR_CRITIC = 1e-3        learning rate of the critic  
+WEIGHT_DECAY = 0        L2 weight decay  
+GRAD_CLIPPING = 1       Activate gradient clippin in critic.  
 
 # Plot of rewards
 Below is a training run of the above model architecture and hyperparameters:
 
 Number of agents: 1   
-Episode 100	Average Score: 4.99
-Episode 200	Average Score: 26.14
-Episode 221	Average Score: 30.02
-Environment solved in 221 episodes!	Average Score: 30.02
+Episode 100	Average Score: 4.99  
+Episode 200	Average Score: 26.14  
+Episode 221	Average Score: 30.02  
+Environment solved in 221 episodes!	Average Score: 30.02  
 The plot of rewards for this run is as follows:
 <img width="359" height="234" alt="Trend_solucionDDPGReacher" src="https://github.com/user-attachments/assets/cad2fdb4-7087-4b07-9886-a91773d19ed5" />
 
@@ -74,4 +89,4 @@ Finally, a very simple change to make would be to raise the target score - say, 
 
 # References
 
-1.- [DQN Paper] (https://storage.googleapis.com/deepmind-media/dqn/DQNNaturePaper.pdf)
+1.- [DDPG Paper] (https://arxiv.org/abs/1509.02971)
