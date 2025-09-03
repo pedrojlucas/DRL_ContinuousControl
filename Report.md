@@ -41,17 +41,17 @@ In order to achieve an stable and reliable training of the agent some important 
 
 ## Architecture for the Actor
 
-Fully connected layer 1: Input 33 (state space), Output 256, RELU activation.  
-Batch normalization layer 1: Input 256 and output 256. Smooth training.
+Fully connected layer 1: Input 33 (state space), Output 256, RELU activation.    
+Batch normalization layer 1: Input 256 and output 256. Smooth training.  
 Fully connected layer 2: Input 256, Output 256, RELU activation.  
-Fully connected layer 3: Input 256, Output 4 (action space), tanh activation for clipping output between -1 and 1. 
+Fully connected layer 3: Input 256, Output 4 (action space), tanh activation for clipping output between -1 and 1.   
 
 ## Architecture for the Critic
 
-Fully connected layer 1: Input 33 (state space), Output 256, RELU activation.  
-Batch normalization layer 1: Input 256 and output 256. Smooth training.
-Fully connected layer 2: Input 256, Output 256, RELU activation.  
-Fully connected layer 3: Input 256, Output 4 (action space).   
+Fully connected layer 1: Input 33 (state space), Output 256, RELU activation.    
+Batch normalization layer 1: Input 256 and output 256. Smooth training.  
+Fully connected layer 2: Input 256, Output 256, RELU activation.    
+Fully connected layer 3: Input 256, Output 4 (action space).     
 
 The hyperparameters for tweaking and optimizing the learning algorithm were:
 
